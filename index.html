@@ -1,0 +1,1065 @@
+Pegá esto completo en GitHub como index.html:
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Simulador de Sueldo Médico — Uruguay 2026</title>
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --border: #e0ddd5;
+  --border2: #ccc9c0;
+  --text: #1c1b18;
+  --text2: #6b6860;
+  --text3: #a8a59e;
+  --green: #2e7d52;
+  --green-bg: #e8f5ee;
+  --green-dark: #1e5c3a;
+  --red: #c0392b;
+  --blue: #1a5fa8;
+  --blue-bg: #e8f0fb;
+  --amber: #92540a;
+  --amber-bg: #fdf3e2;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1917;
+    --surface: #242320;
+    --surface2: #2e2c29;
+    --border: #3a3835;
+    --border2: #4a4845;
+    --text: #f0ede8;
+    --text2: #b6b2aa;
+    --text3: #77736e;
+    --green: #4caf77;
+    --green-bg: #1a3328;
+    --green-dark: #3d9966;
+    --red: #e57373;
+    --blue: #5b9bd5;
+    --blue-bg: #1a2640;
+    --amber: #f0a84a;
+    --amber-bg: #2e1e0a;
+  }
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-wrap: wrap;
+}
+header h1 {
+  font-size: 17px;
+  font-weight: 700;
+}
+.badge {
+  font-size: 11px;
+  background: var(--blue-bg);
+  color: var(--blue);
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.header-btns {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+button {
+  font-family: inherit;
+}
+.btn-reset {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text2);
+  cursor: pointer;
+}
+.btn-tutorial {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--blue);
+  color: #fff;
+  cursor: pointer;
+}
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media (min-width: 720px) {
+  .page {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    min-height: calc(100vh - 54px);
+  }
+  .sidebar {
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 54px;
+    height: calc(100vh - 54px);
+    overflow-y: auto;
+  }
+  .calc-btn-wrap {
+    display: none;
+  }
+}
+@media (max-width: 719px) {
+  .page {
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar {
+    order: 1;
+  }
+  .calc-btn-wrap {
+    order: 2;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    bottom: 0;
+    z-index: 90;
+  }
+  .results-wrap {
+    order: 3;
+  }
+}
+.sidebar {
+  background: var(--surface);
+}
+.acc-section {
+  border-bottom: 1px solid var(--border);
+}
+.acc-trigger {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+}
+.acc-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text3);
+}
+.acc-body {
+  padding: 4px 18px 18px;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+.acc-section.open .acc-body {
+  display: flex;
+}
+.acc-section.open .acc-icon {
+  transform: rotate(180deg);
+}
+@media (min-width: 720px) {
+  .acc-trigger {
+    pointer-events: none;
+    padding: 0 18px 10px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    color: var(--text3);
+  }
+  .acc-icon {
+    display: none;
+  }
+  .acc-body {
+    display: flex !important;
+    padding-top: 0;
+  }
+  .acc-section {
+    padding-top: 16px;
+  }
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.field label {
+  font-size: 13px;
+  color: var(--text2);
+  font-weight: 500;
+}
+.field input,
+.field select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 16px;
+  color: var(--text);
+  width: 100%;
+  min-height: 44px;
+  outline: none;
+}
+.field input:focus,
+.field select:focus {
+  border-color: var(--blue);
+  background: var(--surface);
+}
+.field .hint {
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.4;
+}
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.btn-calc {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--green);
+  color: #fff;
+  cursor: pointer;
+  min-height: 50px;
+}
+.results-wrap {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+@media (min-width: 720px) {
+  .results-wrap {
+    padding: 22px 24px;
+  }
+}
+.liq-hero {
+  background: var(--green-bg);
+  border: 1.5px solid var(--green);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.liq-hero .lh-label {
+  font-size: 13px;
+  color: var(--green);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.liq-hero .lh-amount {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.liq-hero .lh-sub {
+  font-size: 13px;
+  color: var(--green);
+  opacity: .8;
+  margin-top: 6px;
+}
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 430px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.mc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 14px;
+}
+.mc .ml {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 4px;
+}
+.mc .mv {
+  font-size: 17px;
+  font-weight: 700;
+}
+.mc .ms {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 3px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.card-hd {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text3);
+  background: var(--surface2);
+  padding: 9px 15px;
+  border-bottom: 1px solid var(--border);
+}
+.brow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 9px 15px;
+  border-bottom: 1px solid var(--bg);
+  gap: 8px;
+}
+.brow:last-child {
+  border-bottom: none;
+}
+.brow .bl {
+  font-size: 13px;
+  color: var(--text2);
+  flex: 1;
+}
+.brow .bd {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+.brow .bv {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.brow.gsep {
+  background: var(--surface2);
+  padding: 6px 15px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.brow.gsep .bl {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text3);
+}
+.brow.sub {
+  background: var(--surface2);
+  border-top: 1px solid var(--border);
+}
+.brow.sub .bl {
+  font-weight: 700;
+  color: var(--text);
+}
+.brow.liqrow {
+  background: var(--green-bg);
+  border-top: 1.5px solid var(--green);
+}
+.brow.liqrow .bl,
+.brow.liqrow .bv {
+  font-weight: 700;
+  color: var(--green);
+}
+.pos {
+  color: var(--green);
+}
+.neg {
+  color: var(--red);
+}
+.mut {
+  color: var(--text3);
+}
+.annual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 500px) {
+  .annual-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.ag {
+  padding: 13px 15px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.ag .al {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.ag .av {
+  font-size: 16px;
+  font-weight: 700;
+}
+.ag .as {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+.ag.hl {
+  background: var(--green-bg);
+}
+.ag.hl .al,
+.ag.hl .av {
+  color: var(--green);
+}
+.irpf-note,
+.tip {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 13px 15px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.irpf-note {
+  background: var(--blue-bg);
+  border-left: 3px solid var(--blue);
+  color: var(--blue);
+}
+.tip {
+  background: var(--amber-bg);
+  border-left: 3px solid var(--amber);
+  color: var(--amber);
+}
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 500;
+  overflow-y: auto;
+  padding: 20px 12px;
+  align-items: flex-start;
+  justify-content: center;
+}
+.overlay.open {
+  display: flex;
+}
+.modal {
+  background: var(--surface);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 660px;
+  margin: auto;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.modal-hd {
+  background: var(--blue);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.modal-hd h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+.modal-hd p {
+  font-size: 12px;
+  color: rgba(255,255,255,.75);
+  margin-top: 3px;
+}
+.modal-close {
+  background: rgba(255,255,255,.18);
+  border: none;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+}
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: 72vh;
+  overflow-y: auto;
+}
+.tstep {
+  display: flex;
+  gap: 14px;
+}
+.tnum {
+  width: 30px;
+  height: 30px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tcon h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.tcon p {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+hr.tdiv {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+.glos {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.glos-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text3);
+  background: var(--surface2);
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.gi {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--bg);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.gi:last-child {
+  border-bottom: none;
+}
+.gt {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 120px;
+}
+.gd {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+  flex: 1;
+  min-width: 180px;
+}
+footer {
+  text-align: center;
+  padding: 14px 16px 28px;
+  font-size: 11px;
+  color: var(--text3);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Sueldo Médico</h1>
+  <span class="badge">Uruguay 2026</span>
+  <div class="header-btns">
+    <button class="btn-reset" type="button" onclick="resetear()">↻ Reiniciar</button>
+    <button class="btn-tutorial" type="button" onclick="abrirModal()">Tutorial</button>
+  </div>
+</header>
+<div class="page">
+  <div class="sidebar">
+    <div class="acc-section open">
+      <button class="acc-trigger" type="button" onclick="toggleAcc(this)">
+        Datos personales
+        <span class="acc-icon">⌄</span>
+      </button>
+      <div class="acc-body">
+        <div class="field">
+          <label>Situación familiar (FONASA)</label>
+          <select id="fonasa_rate" onchange="calcAuto()">
+            <option value="0.045">Sin hijos, sin cónyuge — 4,5%</option>
+            <option value="0.06">Con hijos, sin cónyuge — 6%</option>
+            <option value="0.065">Con cónyuge, sin hijos — 6,5%</option>
+            <option value="0.08">Con hijos y cónyuge — 8%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Trienios de antigüedad</label>
+          <input type="number" id="trienios" value="0" min="0" max="30" inputmode="numeric" oninput="calcAuto()">
+          <span class="hint">Cada trienio suma 1% sobre el honorario base. Si recién ingresás, ponés 0.</span>
+        </div>
+      </div>
+    </div>
+    <div class="acc-section open">
+      <button class="acc-trigger" type="button" onclick="toggleAcc(this)">
+        Horas y valores
+        <span class="acc-icon">⌄</span>
+      </button>
+      <div class="acc-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Horas totales / mes</label>
+            <input type="number" id="horas_total" value="90" min="1" max="250" inputmode="numeric" oninput="calcAuto()">
+          </div>
+          <div class="field">
+            <label>Horas nocturnas</label>
+            <input type="number" id="horas_noc" value="16" min="0" inputmode="numeric" oninput="calcAuto()">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Valor hora ($)</label>
+            <input type="number" id="valor_hora" value="1208.70" step="0.01" min="0" inputmode="decimal" oninput="calcAuto()">
+          </div>
+          <div class="field">
+            <label>Comp. nocturno / hora ($)</label>
+            <input type="number" id="comp_noc" value="398.87" step="0.01" min="0" inputmode="decimal" oninput="calcAuto()">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="acc-section">
+      <button class="acc-trigger" type="button" onclick="toggleAcc(this)">
+        Conceptos adicionales
+        <span class="acc-icon">⌄</span>
+      </button>
+      <div class="acc-body">
+        <div class="field">
+          <label>Adicional s/conv. 06/11</label>
+          <select id="adicional" onchange="calcAuto()">
+            <option value="0">No aplica</option>
+            <option value="0.10">Sí — 10% sobre honorario</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Horas extras</label>
+            <input type="number" id="hs_extra" value="0" min="0" step="0.5" inputmode="decimal" oninput="calcAuto()">
+          </div>
+          <div class="field">
+            <label>Factor hora extra</label>
+            <input type="number" id="factor_extra" value="2" min="1" step="0.5" inputmode="decimal" oninput="calcAuto()">
+            <span class="hint">2 = doble tarifa</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Asoc. Profesional / mes ($)</label>
+            <input type="number" id="asoc" value="500" min="0" inputmode="numeric" oninput="calcAuto()">
+          </div>
+          <div class="field">
+            <label>Otros descuentos / mes ($)</label>
+            <input type="number" id="otros_desc" value="0" min="0" inputmode="numeric" oninput="calcAuto()">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="calc-btn-wrap">
+    <button class="btn-calc" type="button" onclick="calc(true)">Calcular sueldo</button>
+  </div>
+  <div class="results-wrap" id="results">
+    <div style="padding:40px 0;text-align:center;color:var(--text3);">Cargando simulador...</div>
+  </div>
+</div>
+<footer>
+  Simulador orientativo · BPC 2026: $6.864 · Método IRPF aproximado según franjas vigentes 2026<br>
+  Los valores pueden diferir del recibo real según redondeos, criterios del empleador o ajustes particulares.
+</footer>
+<div class="overlay" id="modal" onclick="cerrarSiFondo(event)">
+  <div class="modal">
+    <div class="modal-hd">
+      <div>
+        <h2>Cómo usar el simulador</h2>
+        <p>Guía rápida · Médico dependiente · Uruguay 2026</p>
+      </div>
+      <button class="modal-close" type="button" onclick="cerrarModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="tstep">
+        <div class="tnum">1</div>
+        <div class="tcon">
+          <h3>Datos personales</h3>
+          <p><strong>Situación familiar:</strong> elegí según si tenés hijos menores de 18 o cónyuge a cargo sin cobertura de salud propia. Afecta la tasa de FONASA.</p>
+          <p><strong>Trienios:</strong> uno por cada 3 años trabajados en la misma empresa. Cada trienio suma 1% al honorario.</p>
+        </div>
+      </div>
+      <hr class="tdiv">
+      <div class="tstep">
+        <div class="tnum">2</div>
+        <div class="tcon">
+          <h3>Horas y valores</h3>
+          <p>Las horas nocturnas están incluidas dentro del total. No se suman aparte; solo sirven para calcular el complemento nocturno.</p>
+          <p>Si tu contrato tiene valores distintos, podés modificar el valor hora y el complemento nocturno.</p>
+        </div>
+      </div>
+      <hr class="tdiv">
+      <div class="tstep">
+        <div class="tnum">3</div>
+        <div class="tcon">
+          <h3>Resultados</h3>
+          <p><strong>Líquido mensual:</strong> estimación de lo que se cobraría en mano.</p>
+          <p><strong>Nominal:</strong> total de haberes antes de descuentos.</p>
+          <p><strong>Líquido anual:</strong> suma 12 sueldos, aguinaldo y salario vacacional estimado.</p>
+        </div>
+      </div>
+      <hr class="tdiv">
+      <div class="glos">
+        <div class="glos-title">Glosario</div>
+        <div class="gi"><span class="gt">Montepío</span><span class="gd">15% del nominal. Aporte jubilatorio al BPS.</span></div>
+        <div class="gi"><span class="gt">FONASA</span><span class="gd">4,5% a 8% según situación familiar.</span></div>
+        <div class="gi"><span class="gt">FRL</span><span class="gd">0,1% del nominal. Fondo de Reconversión Laboral.</span></div>
+        <div class="gi"><span class="gt">Caja Auxiliar</span><span class="gd">2,5% del nominal. No se considera deducible para IRPF en este cálculo.</span></div>
+        <div class="gi"><span class="gt">IRPF</span><span class="gd">Impuesto progresivo sobre la renta. El cálculo mensual es una estimación.</span></div>
+      </div>
+      <div class="tip">
+        <strong>Importante:</strong> este simulador es orientativo. El recibo real puede diferir por redondeos, ajustes internos o criterios particulares de liquidación.
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const DEFAULTS = {
+  fonasa_rate: "0.045",
+  trienios: "0",
+  horas_total: "90",
+  horas_noc: "16",
+  valor_hora: "1208.70",
+  comp_noc: "398.87",
+  adicional: "0",
+  hs_extra: "0",
+  factor_extra: "2",
+  asoc: "500",
+  otros_desc: "0"
+};
+function byId(id) {
+  return document.getElementById(id);
+}
+function toggleAcc(btn) {
+  const sec = btn.closest(".acc-section");
+  if (sec) sec.classList.toggle("open");
+}
+function resetear() {
+  Object.entries(DEFAULTS).forEach(([id, val]) => {
+    const el = byId(id);
+    if (el) el.value = val;
+  });
+  calc(false);
+}
+function abrirModal() {
+  const modal = byId("modal");
+  if (modal) modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function cerrarModal() {
+  const modal = byId("modal");
+  if (modal) modal.classList.remove("open");
+  document.body.style.overflow = "";
+}
+function cerrarSiFondo(e) {
+  if (e.target && e.target.id === "modal") cerrarModal();
+}
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") cerrarModal();
+});
+function fmt(n) {
+  if (!isFinite(n)) n = 0;
+  return "$ " + Math.round(n).toLocaleString("es-UY");
+}
+function pct(n, d) {
+  if (!isFinite(n)) n = 0;
+  return (n * 100).toFixed(d === undefined ? 1 : d) + "%";
+}
+function getNum(id) {
+  const el = byId(id);
+  if (!el) return 0;
+  const value = String(el.value).replace(",", ".");
+  const num = parseFloat(value);
+  return isNaN(num) ? 0 : num;
+}
+function calcAuto() {
+  calc(false);
+}
+function calc(scrollToResults) {
+  const fr = getNum("fonasa_rate");
+  const tri = Math.max(0, getNum("trienios"));
+  const ht = Math.max(0, getNum("horas_total"));
+  const hn = Math.min(Math.max(0, getNum("horas_noc")), ht);
+  const vh = Math.max(0, getNum("valor_hora"));
+  const cn = Math.max(0, getNum("comp_noc"));
+  const ad = Math.max(0, getNum("adicional"));
+  const he = Math.max(0, getNum("hs_extra"));
+  const fe = Math.max(1, getNum("factor_extra") || 2);
+  const asoc = Math.max(0, getNum("asoc"));
+  const od = Math.max(0, getNum("otros_desc"));
+  const honorario = ht * vh;
+  const adic_conv = honorario * ad;
+  const noc = hn * cn;
+  const antiguedad = (honorario + adic_conv) * (tri * 0.01);
+  const extras = he * vh * fe;
+  const nominal = honorario + adic_conv + noc + antiguedad + extras;
+  const montepio = nominal * 0.15;
+  const fonasa = nominal * fr;
+  const frl = nominal * 0.001;
+  const caja_aux = nominal * 0.025;
+  const total_bps = montepio + fonasa + frl + caja_aux;
+  const BPC = 6864;
+  const ren = nominal * 1.06;
+  const mni = BPC * 7;
+  const f1 = BPC * 10;
+  const f2 = BPC * 15;
+  const f3 = BPC * 30;
+  const f4 = BPC * 50;
+  let imp = 0;
+  if (ren > mni) imp += Math.min(ren - mni, f1 - mni) * 0.10;
+  if (ren > f1) imp += Math.min(ren - f1, f2 - f1) * 0.15;
+  if (ren > f2) imp += Math.min(ren - f2, f3 - f2) * 0.24;
+  if (ren > f3) imp += Math.min(ren - f3, f4 - f3) * 0.25;
+  if (ren > f4) imp += (ren - f4) * 0.27;
+  const tasa_deduccion = nominal > (BPC * 15) ? 0.08 : 0.14;
+  const deducciones = (montepio + nominal * 0.045 + frl) * tasa_deduccion;
+  const irpf = Math.max(0, imp - deducciones);
+  const total_desc = total_bps + irpf + asoc + od;
+  const liq = nominal - total_desc;
+  const ag_bruto = nominal / 2;
+  const ag_bps = ag_bruto * (0.15 + fr + 0.001);
+  const ag_liq = ag_bruto - ag_bps;
+  const jornal = liq / 25;
+  const salario_vacacional = jornal * 20;
+  const liq_anual = liq * 12 + ag_liq * 2 + salario_vacacional;
+  const franja = ren <= mni
+    ? "0% bajo MNI"
+    : ren <= f1
+      ? "10%"
+      : ren <= f2
+        ? "10% a 15%"
+        : ren <= f3
+          ? "hasta 24%"
+          : ren <= f4
+            ? "hasta 25%"
+            : "hasta 27%";
+  const html = `
+    <div class="liq-hero">
+      <div class="lh-label">Líquido mensual estimado</div>
+      <div class="lh-amount">${fmt(liq)}</div>
+      <div class="lh-sub">sobre un nominal de ${fmt(nominal)} / mes</div>
+    </div>
+    <div class="metrics-grid">
+      <div class="mc">
+        <div class="ml">BPS</div>
+        <div class="mv neg">${fmt(total_bps)}</div>
+        <div class="ms">${nominal > 0 ? pct(total_bps / nominal) : "0%"} del nominal</div>
+      </div>
+      <div class="mc">
+        <div class="ml">IRPF</div>
+        <div class="mv neg">${fmt(irpf)}</div>
+        <div class="ms">Franja ${franja}</div>
+      </div>
+      <div class="mc">
+        <div class="ml">Líquido anual</div>
+        <div class="mv pos">${fmt(liq_anual)}</div>
+        <div class="ms">c/ aguinaldo y vacacional</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd">Desglose mensual</div>
+      <div class="brow gsep"><span class="bl">Haberes</span></div>
+      <div class="brow">
+        <span class="bl">Honorario médico (${ht} hs)</span>
+        <span class="bd">${ht} × ${fmt(vh)}</span>
+        <span class="bv pos">${fmt(honorario)}</span>
+      </div>
+      ${adic_conv > 0 ? `
+      <div class="brow">
+        <span class="bl">Adicional s/conv. 06/11</span>
+        <span class="bd">${pct(ad)}</span>
+        <span class="bv pos">${fmt(adic_conv)}</span>
+      </div>` : ""}
+      ${noc > 0 ? `
+      <div class="brow">
+        <span class="bl">Comp. nocturno (${hn} hs)</span>
+        <span class="bd">${hn} × ${fmt(cn)}</span>
+        <span class="bv pos">${fmt(noc)}</span>
+      </div>` : ""}
+      ${antiguedad > 0 ? `
+      <div class="brow">
+        <span class="bl">Antigüedad (${tri} trienio${tri !== 1 ? "s" : ""})</span>
+        <span class="bd">${tri}%</span>
+        <span class="bv pos">${fmt(antiguedad)}</span>
+      </div>` : ""}
+      ${extras > 0 ? `
+      <div class="brow">
+        <span class="bl">Horas extras (${he} hs × ${fe})</span>
+        <span class="bd">${fmt(vh * fe)}/hs</span>
+        <span class="bv pos">${fmt(extras)}</span>
+      </div>` : ""}
+      <div class="brow sub">
+        <span class="bl">Total haberes nominales</span>
+        <span class="bv">${fmt(nominal)}</span>
+      </div>
+      <div class="brow gsep"><span class="bl">Descuentos BPS</span></div>
+      <div class="brow">
+        <span class="bl">501 · Montepío 15%</span>
+        <span class="bd">jubilación</span>
+        <span class="bv neg">− ${fmt(montepio)}</span>
+      </div>
+      <div class="brow">
+        <span class="bl">505 · FONASA ${pct(fr)}</span>
+        <span class="bd">salud</span>
+        <span class="bv neg">− ${fmt(fonasa)}</span>
+      </div>
+      <div class="brow">
+        <span class="bl">507 · FRL 0,1%</span>
+        <span class="bd">reconversión</span>
+        <span class="bv neg">− ${fmt(frl)}</span>
+      </div>
+      <div class="brow">
+        <span class="bl">516 · Caja Aux. 2,5%</span>
+        <span class="bd">caja auxiliar</span>
+        <span class="bv neg">− ${fmt(caja_aux)}</span>
+      </div>
+      <div class="brow sub">
+        <span class="bl">Total BPS</span>
+        <span class="bv neg">− ${fmt(total_bps)}</span>
+      </div>
+      <div class="brow gsep"><span class="bl">IRPF estimado</span></div>
+      <div class="brow">
+        <span class="bl">Base computable nominal + 6% ficto</span>
+        <span class="bv mut">${fmt(ren)}</span>
+      </div>
+      <div class="brow">
+        <span class="bl">Impuesto bruto por franjas</span>
+        <span class="bv neg">− ${fmt(imp)}</span>
+      </div>
+      <div class="brow">
+        <span class="bl">Deducción aportes BPS ${pct(tasa_deduccion)}</span>
+        <span class="bv pos">+ ${fmt(deducciones)}</span>
+      </div>
+      <div class="brow sub">
+        <span class="bl">508 · Anticipo IRPF neto</span>
+        <span class="bv neg">− ${fmt(irpf)}</span>
+      </div>
+      ${(asoc > 0 || od > 0) ? `
+      <div class="brow gsep"><span class="bl">Otros descuentos</span></div>
+      ${asoc > 0 ? `
+      <div class="brow">
+        <span class="bl">Asoc. Profesional</span>
+        <span class="bv neg">− ${fmt(asoc)}</span>
+      </div>` : ""}
+      ${od > 0 ? `
+      <div class="brow">
+        <span class="bl">Otros descuentos</span>
+        <span class="bv neg">− ${fmt(od)}</span>
+      </div>` : ""}` : ""}
+      <div class="brow liqrow">
+        <span class="bl">Líquido a cobrar</span>
+        <span class="bv">${fmt(liq)}</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd">Proyección anual</div>
+      <div class="annual-grid">
+        <div class="ag">
+          <div class="al">Líquido mensual × 12</div>
+          <div class="av">${fmt(liq * 12)}</div>
+        </div>
+        <div class="ag">
+          <div class="al">Aguinaldo líquido estimado</div>
+          <div class="av pos">${fmt(ag_liq * 2)}</div>
+          <div class="as">${fmt(ag_liq)} cada cuota</div>
+        </div>
+        <div class="ag">
+          <div class="al">Salario vacacional</div>
+          <div class="av pos">${fmt(salario_vacacional)}</div>
+          <div class="as">${fmt(jornal)} jornal líquido</div>
+        </div>
+        <div class="ag">
+          <div class="al">Nominal bruto anual</div>
+          <div class="av">${fmt(nominal * 12)}</div>
+        </div>
+        <div class="ag">
+          <div class="al">Descuentos anuales estimados</div>
+          <div class="av neg">${fmt(total_desc * 12 + ag_bps * 2)}</div>
+        </div>
+        <div class="ag hl">
+          <div class="al">Total líquido anual</div>
+          <div class="av">${fmt(liq_anual)}</div>
+          <div class="as">${fmt(liq_anual / 12)} promedio mensual</div>
+        </div>
+      </div>
+    </div>
+    <div class="irpf-note">
+      <strong>IRPF:</strong> base computable = nominal + 6% ficto = ${fmt(ren)}. 
+      Mínimo no imponible estimado: 7 BPC = ${fmt(mni)}. 
+      Deducción BPS aplicada al ${pct(tasa_deduccion)}.
+    </div>
+  `;
+  const results = byId("results");
+  if (results) results.innerHTML = html;
+  if (scrollToResults && results) {
+    setTimeout(function() {
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  }
+}
+document.addEventListener("DOMContentLoaded", function() {
+  calc(false);
+});
+</script>
+</body>
+</html>
